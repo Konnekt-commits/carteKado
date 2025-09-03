@@ -1,6 +1,7 @@
 import dbConnection from "@/repository/db"
 import {ResultSetHeader} from "mysql2"
-import Produit from "@/models/produit.model"
+import LigneProduit from "@/models/ligneProduit.model"
+
 interface DynamicObject {
     [key: string]: any; // Defines that any string key will have a value of 'any' type
 }
@@ -14,35 +15,35 @@ const processDynamicData = (data: DynamicObject) => {
     }
     return arrayKeyValue
 }
-interface IProduitRepository {
-    save(produit: Produit): Promise<Produit>
-    findOneByID(id_produit: number): Promise<Produit| undefined>
-    findOne(key: DynamicObject): Promise<Produit | undefined>
-    update(produit: Produit): Promise<number>
-    find(data: DynamicObject): Promise<Produit[]>
-    delete(id_produit: number): Promise<number>
+interface ILigneProduitRepository {
+    save(ligneProduit: LigneProduit): Promise<LigneProduit>
+    findOneByID(ligne_id: { id_carte: number, id_produit: number }): Promise<LigneProduit| undefined>
+    findOne(key: DynamicObject): Promise<LigneProduit | undefined>
+    update(ligneProduit: LigneProduit): Promise<number>
+    find(data: DynamicObject): Promise<LigneProduit[]>
+    delete(ligne_id: { id_carte: number, id_produit: number }): Promise<number>
 }
 
-class ProduitRepository implements IProduitRepository {
-    save(produit: Produit): Promise<Produit> {
+class LigneProduitRepository implements ILigneProduitRepository {
+    save(ligneProduit: LigneProduit): Promise<LigneProduit> {
         return new Promise((resolve, reject) => {
             dbConnection.query<ResultSetHeader>(
-                "INSERT INTO produit (id_entreprise, nom, prix_ttc, actif) VALUES(?,?,?,?)",
-                [ produit.id_entreprise, produit.nom, produit.prix_ttc, produit.actif],
-                (err, res) => {
+                "INSERT INTO carte_ligne_produit (id_carte, id_produit, quantite) VALUES(?,?,?)",
+                [ligneProduit.id_carte, ligneProduit.id_produit, ligneProduit.quantite],
+                (err) => {
                     if (err) reject(err)
-                    else this.findOneByID(res.insertId)
-                        .then((produit) => resolve(produit))
+                    else this.findOneByID({id_carte:ligneProduit.id_carte, id_produit: ligneProduit.id_produit})
+                        .then((ligne) => resolve(ligne))
                         .catch(reject)
                 }
             )
         })
     }
-    findOneByID(id_produit: number): Promise<Produit> {
+    findOneByID(ligne_id: { id_carte: number, id_produit: number }): Promise<LigneProduit> {
         return new Promise((resolve, reject) => {
-            dbConnection.query<Produit[]>(
-                "SELECT * FROM produit WHERE id_produit = ?",
-                [id_produit],
+            dbConnection.query<LigneProduit[]>(
+                "SELECT * FROM carte_ligne_produit WHERE id_carte = ? AND id_produit = ?",
+                [ligne_id.id_carte, ligne_id.id_produit],
                 (err,res) =>{
                     if (err) reject(err)
                     else resolve(res?.[0])
@@ -55,11 +56,11 @@ class ProduitRepository implements IProduitRepository {
     //     // return null
     // }
 
-    findOne(data: DynamicObject): Promise<Produit | undefined> {
+    findOne(data: DynamicObject): Promise<LigneProduit | undefined> {
         const q = processDynamicData(data)[0]
         return new Promise((resolve, reject) => {
-            dbConnection.query<Produit[]>(
-                `SELECT * FROM produit WHERE ${q.key} = ?`,
+            dbConnection.query<LigneProduit[]>(
+                `SELECT * FROM carte_ligne_produit WHERE ${q.key} = ?`,
                 [q.value],
                 (err, res) => {
                     if (err) reject(err)
@@ -69,11 +70,11 @@ class ProduitRepository implements IProduitRepository {
         })
     }
 
-    update(produit: Produit): Promise<number> {
+    update(ligneProduit: LigneProduit): Promise<number> {
         return new Promise((resolve, reject) => {
             dbConnection.query<ResultSetHeader>(
-                "UPDATE produit SET id_entreprise = ?, nom = ?, prix_ttc = ?, actif = ? WHERE id_produit = ?",
-                [ produit.id_entreprise, produit.nom, produit.prix_ttc, produit.actif, produit.id_produit],
+                "UPDATE carte_ligne_produit SET id_carte = ?, id_produit = ?, quantite = ? WHERE id_client = ?",
+                [ligneProduit.id_carte, ligneProduit.id_produit, ligneProduit.quantite],
                 (err, res) => {
                     if (err) reject(err)
                     else resolve(res.affectedRows)
@@ -81,8 +82,8 @@ class ProduitRepository implements IProduitRepository {
             )
         })
     }
-    find(data: DynamicObject): Promise<Produit[]> {
-        let query: string = "SELECT * FROM produit"
+    find(data: DynamicObject): Promise<LigneProduit[]> {
+        let query: string = "SELECT * FROM carte_ligne_produit"
 
         const q = processDynamicData(data)
 
@@ -90,10 +91,8 @@ class ProduitRepository implements IProduitRepository {
         if (q.length > 0) {
             query += " WHERE "
             q.map((c, index) => {
-                if (c.key === 'id_produit' || c.key === 'id_entreprise'|| c.key === 'actif') {
+                if (c.key === 'id_carte' || c.key === 'id_produit' || c.key === 'quantite') {
                     partial = `${c.key} = ${c.value}`
-                }else if( c.key === 'nom') {
-                    partial = `LOWER(${c.key}) LIKE '%${c.value}%'`
                 }
                 if (index === 0) {
                     query+= partial
@@ -103,7 +102,7 @@ class ProduitRepository implements IProduitRepository {
             })
         }
         return new Promise((resolve, reject) => {
-            dbConnection.query<Produit[]>(query, (err, res) => {
+            dbConnection.query<LigneProduit[]>(query, (err, res) => {
                 if(err) reject(err)
                 else resolve(res)
             })
@@ -111,11 +110,11 @@ class ProduitRepository implements IProduitRepository {
 
     }
 
-    delete(id_produit: number): Promise<number> {
+    delete(ligne_id: { id_carte: number, id_produit: number }): Promise<number> {
         return new Promise((resolve, reject) => {
             dbConnection.query<ResultSetHeader>(
-                "DELETE FROM produit WHERE id_produit = ?",
-                [id_produit],
+                "DELETE FROM carte_ligne_produit WHERE id_carte = ? AND id_produit = ?",
+                [ligne_id.id_carte, ligne_id.id_produit],
                 (err, res) => {
                     if (err) reject(err)
                     else resolve(res.affectedRows)
@@ -125,4 +124,4 @@ class ProduitRepository implements IProduitRepository {
     }
 }
 
-export default new ProduitRepository()
+export default new LigneProduitRepository()

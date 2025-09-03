@@ -2,7 +2,6 @@ import {CatchAsyncError} from "@/middleware/catchAsyncError"
 import {NextFunction, Request, Response} from "express"
 import ErrorHandler from "@/utils/ErrorHandler"
 import EntrepriseRepository from "@/repository/entreprise.repository"
-import Client from "@/models/client.model"
 import ClientRepository from "@/repository/client.repository"
 import {redis} from "@/utils/redis"
 import {v4 as uuidv4} from 'uuid'
@@ -109,6 +108,7 @@ export const updateCarteCadeau = CatchAsyncError(async (req: Request, res: Respo
         next(error)
     }
 })
+
 
 export const AllCartes = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {

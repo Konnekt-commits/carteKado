@@ -14,6 +14,7 @@ import inviteRoute from "@/routes/invite.route"
 import carteRoute from "@/routes/carte.route"
 import emailRoute from "@/routes/email.route"
 import produitRoute from "@/routes/produit.route"
+import ligneProduitRoute from "@/routes/ligneProduit.route"
 
 //cloudinary config
 
@@ -100,6 +101,7 @@ const StartServer = () => {
     router.use('/api/v1', carteRoute)
     router.use('/api/v1', emailRoute)
     router.use('/api/v1', produitRoute)
+    router.use('/api/v1', ligneProduitRoute)
 
     /** healthCheck */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
