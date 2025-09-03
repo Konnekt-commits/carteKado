@@ -1,0 +1,71 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASSWORD}'
+      MYSQL_DATABASE: '${MYSQL_DATABASE}'
+      MYSQL_USER: '${MYSQL_USERNAME}'
+      MYSQL_PASSWORD: '${MYSQL_PASSWORD}'
+    ports:
+      - "3306:3306" # Maps port 3306 on the host to port 3306 in the container
+    env_file:
+      - .env
+    volumes:
+      - mysql_data:/var/lib/mysql # Persists data to a named volume
+      - ./initdb:/docker-entrypoint-initdb.d # Init script data to a named volume
+    healthcheck: # Defines a health check to ensure MySQL is ready
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pyour_root_password" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  redis:
+    restart: unless-stopped
+    image: redis:7-alpine
+    ports:
+      - 6379:6379
+    env_file:
+      - .env
+    command: "redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}"
+    volumes:
+      - cache:/data
+    networks:
+      - redis-network
+  # Dev tools
+  mail:
+    image: mailhog/mailhog
+    ports:
+      - 1080:8025
+  adminer:
+    image: adminer
+    environment:
+      APP_ENV: dev
+      ADMINER_DESIGN: pepa-linha
+      ADMINER_DEFAULT_SERVER: db
+    ports:
+      - 8888:8080
+  redis-gui:
+    image: rediscommander/redis-commander
+    env_file:
+      - .env
+    environment:
+        REDIS_HOST: redis
+        REDIS_HOSTS: redis
+        REDIS_PORT: redis:6379
+        REDIS_PASSWORD: ${REDIS_PASSWORD}
+        HTTP_USER: root
+        HTTP_PASSWORD: root
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    networks:
+      - redis-network
+
+volumes:
+  mysql_data:
+  cache:
+    driver: local
+networks:
+  redis-network:
+    driver: bridge
