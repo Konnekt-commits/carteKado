@@ -4,7 +4,6 @@ import ErrorHandler from "@/utils/ErrorHandler"
 import EntrepriseRepository from "@/repository/entreprise.repository"
 import Client from "@/models/client.model"
 import ClientRepository from "@/repository/client.repository"
-import clientRepository from "@/repository/client.repository"
 import {redis} from "@/utils/redis"
 import {v4 as uuidv4} from 'uuid'
 import InviteRepository from "@/repository/invite.repository"
@@ -14,6 +13,7 @@ import Email from "@/models/email.model"
 import {StatusEmail, TypeDestination} from "@/customTypes"
 import EmailRepository from "@/repository/email.repository"
 import {sendEmail} from "@/utils/sendEmail/sendMail"
+import Logging from "@/libraries/logging"
 
 export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -21,14 +21,13 @@ export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Respo
         const constraints: string[] = ["id_entreprise",
             "id_client",
             "id_invite",
-            "id_user_createur",
             "date_expiration",
             // "code",
             "type_valeur",
             "montant_restant",
             "statut"]
         const notDefine = constraints.filter(x => !Object.keys(data).includes(x) || x == null)
-
+        Logging.info(new Date())
         if ( notDefine.length > 0) {
             next(new ErrorHandler(`${notDefine.join(',')}, can not be nullable`, 400))
             return
@@ -52,8 +51,8 @@ export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Respo
             montant_initial: data.montant_initial ? data.montant_initial : undefined,
             montant_restant: data.montant_restant,
             couleur: data.couleur ? data.couleur : undefined,
-            data_emission: new Date(),
-            date_expiration: data.date_expiration,
+            date_emission: new Date(),
+            date_expiration: new Date(data.date_expiration),
             statut: data.statut
 
         } as Carte
@@ -88,39 +87,22 @@ export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Respo
     }
 })
 
-export const updateClient = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+export const updateCarteCadeau = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
 
         const data = req.body
+        // const affectedRows = await CarteRepository.update(newClient)
 
-        const clientID = parseInt(req.params.id, 10)
-        const isClientExist = await ClientRepository.findOneByID(clientID)
-
-        if(!isClientExist) {
-            next(new ErrorHandler('Client not found', 404))
-            return
-        }
-
-        const newClient: Client = {
-            id_client: isClientExist.id_client,
-            id_entreprise: data.id_entreprise ? data.id_entreprise : isClientExist.id_entreprise,
-            email:data.email ? data.email : isClientExist.email,
-            nom: data.nom ? data.nom : isClientExist.nom,
-            adresse: data.adresse ? data.adresse : isClientExist.adresse
-        } as Client
-
-        const affectedRows = await ClientRepository.update(newClient)
-
-        if( affectedRows === 0) {
-            next(new ErrorHandler('Something went wrong! affected rows number is 0', 404))
-            return
-        }
-
-        res.status(201).json({
-            success: true,
-            affectedRows,
-            message: 'client is successfully update'
-        })
+        // if( affectedRows === 0) {
+        //     next(new ErrorHandler('Something went wrong! affected rows number is 0', 404))
+        //     return
+        // }
+        //
+        // res.status(201).json({
+        //     success: true,
+        //     affectedRows,
+        //     message: 'client is successfully update'
+        // })
 
     }catch (err: unknown) {
         const error = err as Error
@@ -128,12 +110,12 @@ export const updateClient = CatchAsyncError(async (req: Request, res: Response, 
     }
 })
 
-export const AllClients = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+export const AllCartes = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const clients = await clientRepository.find({})
+        const cartes = await CarteRepository.find({})
         res.status(201).json({
             success: true,
-            clients
+            cartes
         })
 
     }catch (err: unknown) {
@@ -142,13 +124,13 @@ export const AllClients = CatchAsyncError(async (req: Request, res: Response, ne
     }
 })
 
-export const ClientInfo = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+export const CarteInfo = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const clientID = parseInt(req.params.id, 10)
-        const client = await clientRepository.findOneByID(clientID)
+        const carteID = parseInt(req.params.id, 10)
+        const carte = await CarteRepository.findOneByID(carteID)
         res.status(201).json({
             success: true,
-            client
+            carte
         })
 
     }catch (err: unknown) {
@@ -157,21 +139,21 @@ export const ClientInfo = CatchAsyncError(async (req: Request, res: Response, ne
     }
 })
 
-export const deleteClient = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+export const deleteCarte = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {
         const id = parseInt(req.params.id, 10)
-        const client = await ClientRepository.findOneByID(id)
-        if (!client) {
-            next(new ErrorHandler('Client not found', 404))
+        const carte = await CarteRepository.findOneByID(id)
+        if (!carte) {
+            next(new ErrorHandler('Carte not found', 404))
             return
         }
         await ClientRepository.delete(id)
-        await redis.del(`client:${id}`)
-        await redis.del('allClients')
+        await redis.del(`carte:${id}`)
+        await redis.del('allCartes')
 
         res.status(201).json({
             success: true,
-            message: "Client deleted successfully"
+            message: "carte deleted successfully"
         })
 
     }catch (err: unknown) {
