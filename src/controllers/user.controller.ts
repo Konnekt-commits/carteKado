@@ -18,7 +18,7 @@ import process from "node:process"
 import {setCookie} from "@/utils/cookies/setCookies"
 import Logging from "@/libraries/logging"
 import { redis } from '@/utils/redis'
-import {RedisKey} from "ioredis";
+import {RedisKey} from "ioredis"
 
 export const userRegistration = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     try {

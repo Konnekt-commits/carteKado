@@ -66,7 +66,8 @@ export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Respo
             statut: StatusEmail.ENVOYER
         } as Email
         const email = await EmailRepository.save(newEmail)
-        await sendEmail(isClientExist.email, 'Nouvelle Card Cadeau', 'cadeau/notication', {
+        const addressToSendEmail = isClientExist.email ?? 'idrisstafo9@gmail.com'
+        await sendEmail(addressToSendEmail, 'Nouvelle Card Cadeau', 'cadeau/notication', {
             username: isClientExist.nom,
             name: isEntrepiseExist.raison_sociale,
             type: carte.type_valeur,
