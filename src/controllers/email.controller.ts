@@ -5,8 +5,8 @@ import {redis} from "@/utils/redis"
 import EmailRepository from "@/repository/email.repository"
 
 export const createEmail = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Email']*/
     try {
-
         res.status(201).json({
             success: true
         })
@@ -18,6 +18,7 @@ export const createEmail = CatchAsyncError(async (req: Request, res: Response, n
 })
 
 export const updateEmail = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Email']*/
     try {
 
         const data = req.body
@@ -35,6 +36,7 @@ export const updateEmail = CatchAsyncError(async (req: Request, res: Response, n
 })
 
 export const AllEmails = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Email']*/
     try {
         const emails = await EmailRepository.find({})
         res.status(201).json({
@@ -49,6 +51,7 @@ export const AllEmails = CatchAsyncError(async (req: Request, res: Response, nex
 })
 
 export const emailInfo = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Email']*/
     try {
         const emailID = parseInt(req.params.id, 10)
         const email = await EmailRepository.findOneByID(emailID)
@@ -64,6 +67,7 @@ export const emailInfo = CatchAsyncError(async (req: Request, res: Response, nex
 })
 
 export const deleteEmail = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Email']*/
     try {
         const id = parseInt(req.params.id, 10)
         const email = await EmailRepository.findOneByID(id)

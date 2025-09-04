@@ -7,6 +7,7 @@ import Produit from "@/models/produit.model"
 import ProduitRepository from "@/repository/produit.repository";
 
 export const createProduit = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Produits']*/
     try {
         const { id_entreprise, nom, prix_ttc, actif } = req.body
 
@@ -41,6 +42,7 @@ export const createProduit = CatchAsyncError(async (req: Request, res: Response,
 })
 
 export const updateProduit = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Produits']*/
     try {
 
         const data = req.body
@@ -81,6 +83,7 @@ export const updateProduit = CatchAsyncError(async (req: Request, res: Response,
 })
 
 export const AllProduits = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Produits']*/
     try {
         const produits = await ProduitRepository.find({})
         res.status(201).json({
@@ -95,6 +98,7 @@ export const AllProduits = CatchAsyncError(async (req: Request, res: Response, n
 })
 
 export const produitInfo = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Produits']*/
     try {
         const produitID = parseInt(req.params.id, 10)
         const produit = await ProduitRepository.findOneByID(produitID)
@@ -110,6 +114,7 @@ export const produitInfo = CatchAsyncError(async (req: Request, res: Response, n
 })
 
 export const deleteProduit = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Produits']*/
     try {
         const id = parseInt(req.params.id, 10)
         const produit = await ProduitRepository.findOneByID(id)

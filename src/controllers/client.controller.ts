@@ -8,6 +8,7 @@ import clientRepository from "@/repository/client.repository"
 import {redis} from "@/utils/redis"
 
 export const createClient = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Client']*/
     try {
         const { id_entreprise, email, nom, adresse } = req.body
 
@@ -42,6 +43,7 @@ export const createClient = CatchAsyncError(async (req: Request, res: Response, 
 })
 
 export const updateClient = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Client']*/
     try {
 
         const data = req.body
@@ -82,6 +84,7 @@ export const updateClient = CatchAsyncError(async (req: Request, res: Response, 
 })
 
 export const AllClients = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Client']*/
     try {
         const clients = await clientRepository.find({})
         res.status(201).json({
@@ -96,6 +99,7 @@ export const AllClients = CatchAsyncError(async (req: Request, res: Response, ne
 })
 
 export const ClientInfo = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Client']*/
     try {
         const clientID = parseInt(req.params.id, 10)
         const client = await clientRepository.findOneByID(clientID)
@@ -111,6 +115,7 @@ export const ClientInfo = CatchAsyncError(async (req: Request, res: Response, ne
 })
 
 export const deleteClient = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Client']*/
     try {
         const id = parseInt(req.params.id, 10)
         const client = await ClientRepository.findOneByID(id)

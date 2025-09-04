@@ -21,6 +21,7 @@ import { redis } from '@/utils/redis'
 import {RedisKey} from "ioredis"
 
 export const userRegistration = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Users']*/
     try {
         validateRegistrationData(req.body)
         const { id_entreprise, email} = req.body
@@ -55,6 +56,7 @@ export const userRegistration = CatchAsyncError(async (req: Request, res: Respon
 })
 
 export const verifyUser = async (req:Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Users']*/
     try {
         const { email, otp, password, id_entreprise} = req.body
         if (!email || !otp || !password || !id_entreprise) {
@@ -90,6 +92,7 @@ export const verifyUser = async (req:Request, res: Response, next: NextFunction)
 }
 
 export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Users']*/
     try {
         const { email, password } = req.body
 
@@ -144,6 +147,7 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
 }
 
 export const refreshToken = async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Users']*/
     try {
         const refreshToken = req.cookies.refresh_token
         if(!refreshToken) {
@@ -185,6 +189,7 @@ export const refreshToken = async (req: Request, res: Response, next: NextFuncti
 }
 
 export const getUser = async (req:Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Users']*/
     try {
         const user = req.user
         res.status(201).json({
@@ -197,6 +202,7 @@ export const getUser = async (req:Request, res: Response, next: NextFunction) =>
 }
 
 export const updatePassword = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Users']*/
     try {
         const { oldPassword, newPassword } = req.body
         if (!oldPassword || !newPassword) {
@@ -243,6 +249,7 @@ export const authorizeRoles = (role: Roles) => {
 
 // Logout user
 export const logoutUser = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Users']*/
     try {
         res.cookie('access_token', '', {maxAge: 1})
         res.cookie('refresh_token', '', {maxAge: 1})

@@ -10,6 +10,7 @@ import LigneProduit from "@/models/ligneProduit.model"
 import Logging from "@/libraries/logging"
 
 export const createLigneProduit = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Ligne Produits']*/
     try {
         const { id_carte, id_produit, quantite } = req.body
 
@@ -63,6 +64,7 @@ export const createLigneProduit = CatchAsyncError(async (req: Request, res: Resp
 })
 
 export const updateLigneProduit = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Ligne Produits']*/
     try {
 
         const data = req.body
@@ -81,6 +83,7 @@ export const updateLigneProduit = CatchAsyncError(async (req: Request, res: Resp
 })
 
 export const AllLigneProduits = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Ligne Produits']*/
     try {
         const ligneProduits = await LigneProduitRepository.find({})
         res.status(201).json({
@@ -95,6 +98,7 @@ export const AllLigneProduits = CatchAsyncError(async (req: Request, res: Respon
 })
 
 export const ligneProduittInfo = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Ligne Produits']*/
     try {
         const id_produit = parseInt(req.query.produit as string, 10)
         const id_carte = parseInt(req.query.carte as string, 10)
@@ -115,6 +119,7 @@ export const ligneProduittInfo = CatchAsyncError(async (req: Request, res: Respo
 })
 
 export const deleteLigneProduit = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Ligne Produits']*/
     try {
         const id_produit = parseInt(req.query.produit as string, 10)
         const id_carte = parseInt(req.query.carte as string, 10)

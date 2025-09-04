@@ -7,6 +7,7 @@ import CarteModele from "@/models/carteModel.model";
 import CarteModeleRepository from "@/repository/carteModele.repository";
 
 export const createCarteModele = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Cartes Modele']*/
     try {
         const dataBody = req.body
         validateCarteModeleData(dataBody)
@@ -24,6 +25,7 @@ export const createCarteModele = CatchAsyncError(async (req: Request, res: Respo
 })
 
 export const updateCarteModele = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Cartes Modele']*/
     try {
 
         const dataBody = req.body
@@ -58,6 +60,7 @@ export const updateCarteModele = CatchAsyncError(async (req: Request, res: Respo
 })
 
 export const AllCarteModeles = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Cartes Modele']*/
     try {
         const carteModele = await CarteModeleRepository.find({})
         res.status(201).json({
@@ -72,6 +75,7 @@ export const AllCarteModeles = CatchAsyncError(async (req: Request, res: Respons
 })
 
 export const CarteModeleInfo = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Cartes Modele']*/
     try {
         const id = parseInt(req.params.id, 10)
         const carteModele = await CarteModeleRepository.findOneByID(id)
@@ -87,6 +91,7 @@ export const CarteModeleInfo = CatchAsyncError(async (req: Request, res: Respons
 })
 
 export const deleteCarteModele = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Cartes Modele']*/
     try {
         const id = parseInt(req.params.id, 10)
         const carteModele = await CarteModeleRepository.findOneByID(id)

@@ -8,6 +8,7 @@ import inviteRepository from "@/repository/invite.repository"
 import Invite from "@/models/invite.model"
 
 export const createInvite = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Invites']*/
     try {
         const { email, nom } = req.body
 
@@ -34,6 +35,7 @@ export const createInvite = CatchAsyncError(async (req: Request, res: Response, 
 })
 
 export const updateInvite = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Invites']*/
     try {
 
         const data = req.body
@@ -72,6 +74,7 @@ export const updateInvite = CatchAsyncError(async (req: Request, res: Response, 
 })
 
 export const AllInvites = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Invites']*/
     try {
         const invites = await inviteRepository.find({})
         res.status(201).json({
@@ -86,6 +89,7 @@ export const AllInvites = CatchAsyncError(async (req: Request, res: Response, ne
 })
 
 export const InviteInfo = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Invites']*/
     try {
         const inviteID = parseInt(req.params.id, 10)
         const client = await inviteRepository.findOneByID(inviteID)
@@ -101,6 +105,7 @@ export const InviteInfo = CatchAsyncError(async (req: Request, res: Response, ne
 })
 
 export const deleteInvite = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Invites']*/
     try {
         const id = parseInt(req.params.id, 10)
         const invite = await inviteRepository.findOneByID(id)
