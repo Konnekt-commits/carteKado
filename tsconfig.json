@@ -6,6 +6,7 @@
     "sourceMap": true,
     "strict": true,
     "outDir": "dist",
+    "resolveJsonModule": true,
     "allowJs": true,
     "lib": ["dom", "es5", "es6"],
     "baseUrl": "./src",

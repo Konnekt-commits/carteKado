@@ -3,6 +3,8 @@ import * as http from 'http'
 import cors from 'cors'
 import * as mysql from 'mysql2'
 import cookieParser from 'cookie-parser'
+import swaggerUi from 'swagger-ui-express'
+
 import {config} from './config/config'
 import Logging from './libraries/logging'
 import { ErrorMiddleware } from '@/middleware/error'
@@ -16,6 +18,8 @@ import emailRoute from "@/routes/email.route"
 import produitRoute from "@/routes/produit.route"
 import ligneProduitRoute from "@/routes/ligneProduit.route"
 import carteModeleRoute from "@/routes/carteModele.route"
+
+import swaggerDocument from "swagger-output.json"
 
 //cloudinary config
 
@@ -104,6 +108,10 @@ const StartServer = () => {
     router.use('/api/v1', produitRoute)
     router.use('/api/v1', ligneProduitRoute)
     router.use('/api/v1', carteModeleRoute)
+
+    /* doc swagger route*/
+    router.use('/api-docs', swaggerUi.serve)
+    router.get('/api-docs', swaggerUi.setup(swaggerDocument))
 
     /** healthCheck */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
