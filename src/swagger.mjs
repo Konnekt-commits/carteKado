@@ -6,7 +6,7 @@ const doc = {
         description: 'Automatically generated Swagger docs',
         version: '1.0.0'
     },
-    host: 'https://api.cartekado.fr/api/v1',
+    host: 'api.cartekado.fr/api/v1',
     schemes: ['https'],
     tags: [
         {
