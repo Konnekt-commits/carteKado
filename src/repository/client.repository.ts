@@ -15,13 +15,7 @@ const processDynamicData = (data: DynamicObject) => {
     }
     return arrayKeyValue
 }
-interface SearchParam {
-    id_user?: number
-    id_entreprise?: number
-    nom?: string
-    email?: string
-    adresse?: string
-}
+
 interface IClientRepository {
     save(user: Client): Promise<Client>
     findOneByID(client_id: number): Promise<Client| undefined>
@@ -35,8 +29,8 @@ class ClientRepository implements IClientRepository {
     save(client: Client): Promise<Client> {
         return new Promise((resolve, reject) => {
             dbConnection.query<ResultSetHeader>(
-                "INSERT INTO client (id_entreprise, nom, email, adresse) VALUES(?,?,?,?)",
-                [client.id_entreprise, client.nom, client.email, client.adresse],
+                "INSERT INTO client (id_entreprise, nom, email, adresse,telephone,Appartement,code_postal, ville, pays) VALUES(?,?,?,?,?,?,?,?,?)",
+                [client.id_entreprise, client.nom, client.email, client.adresse, client.telephone, client.Appartement, client.code_postal, client.ville, client.pays],
                 (err, res) => {
                     if (err) reject(err)
                     else this.findOneByID(res.insertId)
@@ -80,8 +74,8 @@ class ClientRepository implements IClientRepository {
     update(client: Client): Promise<number> {
         return new Promise((resolve, reject) => {
             dbConnection.query<ResultSetHeader>(
-                "UPDATE client SET id_entreprise = ?, nom = ?, email = ?, adresse = ? WHERE id_client = ?",
-                [client.id_entreprise, client.nom, client.email, client.adresse, client.id_client],
+                "UPDATE client SET id_entreprise = ?, nom = ?, email = ?, adresse = ?, telephone = ?, Appartement = ?, code_postal = ?, ville = ?, pays = ? WHERE id_client = ?",
+                [client.id_entreprise, client.nom, client.email, client.adresse, client.telephone, client.Appartement, client.code_postal, client.ville, client.pays, client.id_client],
                 (err, res) => {
                     if (err) reject(err)
                     else resolve(res.affectedRows)

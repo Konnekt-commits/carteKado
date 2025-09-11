@@ -1,41 +1,38 @@
 import {CatchAsyncError} from "@/middleware/catchAsyncError"
 import {NextFunction, Request, Response} from "express"
 import ErrorHandler from "@/utils/ErrorHandler"
-import EntrepriseRepository from "@/repository/entreprise.repository"
-import Client from "@/models/client.model"
-import ClientRepository from "@/repository/client.repository"
-import clientRepository from "@/repository/client.repository"
 import {redis} from "@/utils/redis"
+import {validateCartePersonnalisationData} from "@/helpers/cartePersonnalisation.helper"
+import CarteRepository from "@/repository/carte.repository"
+import CarteModeleRepository from "@/repository/carteModele.repository"
+import CartePersonnalisation from "@/models/cartePersonnalisation.model"
+import CartePersonnalisationRepository from "@/repository/cartePersonnalisation.repository"
+import ClientRepository from "@/repository/client.repository"
+import Client from "@/models/client.model"
 
-export const createClient = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+export const createCartePersonnalisation = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Client']*/
     try {
-        const { id_entreprise, email, nom, adresse } = req.body
         const dataBody = req.body
+        validateCartePersonnalisationData(dataBody)
+        const { id_carte, id_modele } = req.body
+        const id_c = parseInt(id_carte, 10)
+        const id_m = parseInt(id_modele, 10)
 
-        if ( [id_entreprise, email, nom, adresse].some(el => el == null) ) {
-            next(new ErrorHandler(`id_entreprise, email, nom, adresse, can not be nullable`, 400))
+        const isCarteExist = await CarteRepository.findOneByID(id_c)
+        const isModeleExist = await CarteModeleRepository.findOneByID(id_m)
+
+        if (!isCarteExist || !isModeleExist) {
+            next(new ErrorHandler('Try to perform existing carte or model', 400))
             return
         }
 
-        const isEntrepiseExist = await EntrepriseRepository.retrieveById(id_entreprise)
-        if (!isEntrepiseExist) {
-            next(new ErrorHandler('Try to perform existing entreprise', 400))
-            return
-        }
+        const data = dataBody as CartePersonnalisation
 
-        const data = {
-            ...dataBody,
-            id_entreprise,
-            email,
-            nom,
-            adresse
-        } as Client
-
-        const client = await ClientRepository.save(data)
+        const personnalisation = await CartePersonnalisationRepository.save(data)
         res.status(201).json({
             success: true,
-            client
+            personnalisation
         })
 
     }catch (err: unknown) {
@@ -44,7 +41,7 @@ export const createClient = CatchAsyncError(async (req: Request, res: Response, 
     }
 })
 
-export const updateClient = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+export const updateCartePersonnalisation = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Client']*/
     try {
 
@@ -58,8 +55,7 @@ export const updateClient = CatchAsyncError(async (req: Request, res: Response, 
             return
         }
 
-        const newClient: Client = {
-            ...data,
+        const newClient = {
             id_client: isClientExist.id_client,
             id_entreprise: data.id_entreprise ? data.id_entreprise : isClientExist.id_entreprise,
             email:data.email ? data.email : isClientExist.email,
@@ -86,10 +82,10 @@ export const updateClient = CatchAsyncError(async (req: Request, res: Response, 
     }
 })
 
-export const AllClients = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+export const AllCartePersonnalisation = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Client']*/
     try {
-        const clients = await clientRepository.find({})
+        const clients = await ClientRepository.find({})
         res.status(201).json({
             success: true,
             clients
@@ -101,11 +97,11 @@ export const AllClients = CatchAsyncError(async (req: Request, res: Response, ne
     }
 })
 
-export const ClientInfo = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+export const cartePersonnalisationInfo = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Client']*/
     try {
         const clientID = parseInt(req.params.id, 10)
-        const client = await clientRepository.findOneByID(clientID)
+        const client = await ClientRepository.findOneByID(clientID)
         res.status(201).json({
             success: true,
             client
@@ -117,7 +113,7 @@ export const ClientInfo = CatchAsyncError(async (req: Request, res: Response, ne
     }
 })
 
-export const deleteClient = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+export const deleteCartePersonnalisation = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Client']*/
     try {
         const id = parseInt(req.params.id, 10)
