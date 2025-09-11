@@ -8,6 +8,12 @@ import ProduitRepository from "@/repository/produit.repository";
 
 export const createProduit = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Produits']*/
+    /*  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Add produit',
+            schema: { $ref: '#/definitions/Produit'}
+          }
+    */
     try {
         const { id_entreprise, nom, prix_ttc, actif } = req.body
 
@@ -43,6 +49,12 @@ export const createProduit = CatchAsyncError(async (req: Request, res: Response,
 
 export const updateProduit = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Produits']*/
+    /*  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Update produit',
+            schema: { $ref: '#/definitions/Produit'}
+          }
+    */
     try {
 
         const data = req.body

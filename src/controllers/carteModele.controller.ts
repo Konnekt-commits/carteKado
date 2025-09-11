@@ -8,6 +8,12 @@ import CarteModeleRepository from "@/repository/carteModele.repository";
 
 export const createCarteModele = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Cartes Modele']*/
+    /*  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Create new Carte Model',
+            schema: { $ref: '#/definitions/CarteModel'}
+          }
+    */
     try {
         const dataBody = req.body
         validateCarteModeleData(dataBody)
@@ -26,6 +32,12 @@ export const createCarteModele = CatchAsyncError(async (req: Request, res: Respo
 
 export const updateCarteModele = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Cartes Modele']*/
+    /*  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Update Carte Model',
+            schema: { $ref: '#/definitions/CarteModel'}
+          }
+    */
     try {
 
         const dataBody = req.body

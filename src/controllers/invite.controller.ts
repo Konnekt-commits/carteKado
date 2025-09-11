@@ -9,6 +9,12 @@ import Invite from "@/models/invite.model"
 
 export const createInvite = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Invites']*/
+    /*  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Add Invite',
+            schema: { $ref: '#/definitions/Invite'}
+          }
+    */
     try {
         const { email, nom } = req.body
 
@@ -36,6 +42,12 @@ export const createInvite = CatchAsyncError(async (req: Request, res: Response, 
 
 export const updateInvite = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Invites']*/
+    /*  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Update Invite',
+            schema: { $ref: '#/definitions/Invite'}
+          }
+    */
     try {
 
         const data = req.body

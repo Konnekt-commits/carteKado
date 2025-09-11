@@ -6,6 +6,12 @@ import EmailRepository from "@/repository/email.repository"
 
 export const createEmail = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Email']*/
+    /*  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Create Carte Email',
+            schema: { $ref: '#/definitions/Email'}
+          }
+    */
     try {
         res.status(201).json({
             success: true
@@ -19,6 +25,12 @@ export const createEmail = CatchAsyncError(async (req: Request, res: Response, n
 
 export const updateEmail = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Email']*/
+    /*  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Create Carte Email',
+            schema: { $ref: '#/definitions/Email'}
+          }
+    */
     try {
 
         const data = req.body

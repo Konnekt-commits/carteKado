@@ -11,6 +11,12 @@ import Logging from "@/libraries/logging"
 
 export const createLigneProduit = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Ligne Produits']*/
+    /*  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Add ligne produit',
+            schema: { $ref: '#/definitions/Ligne'}
+          }
+    */
     try {
         const { id_carte, id_produit, quantite } = req.body
 
@@ -65,6 +71,12 @@ export const createLigneProduit = CatchAsyncError(async (req: Request, res: Resp
 
 export const updateLigneProduit = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Ligne Produits']*/
+    /*  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'update ligne produit',
+            schema: { $ref: '#/definitions/Ligne'}
+          }
+    */
     try {
 
         const data = req.body

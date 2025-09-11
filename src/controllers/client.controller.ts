@@ -9,6 +9,12 @@ import {redis} from "@/utils/redis"
 
 export const createClient = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Client']*/
+    /*  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Create new client',
+            schema: { $ref: '#/definitions/Client'}
+          }
+    */
     try {
         const { id_entreprise, email, nom, adresse } = req.body
         const dataBody = req.body
@@ -46,6 +52,12 @@ export const createClient = CatchAsyncError(async (req: Request, res: Response, 
 
 export const updateClient = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Client']*/
+    /*  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Update client',
+            schema: { $ref: '#/definitions/Client'}
+          }
+    */
     try {
 
         const data = req.body

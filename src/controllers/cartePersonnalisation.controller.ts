@@ -11,7 +11,13 @@ import ClientRepository from "@/repository/client.repository"
 import Client from "@/models/client.model"
 
 export const createCartePersonnalisation = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
-    /*  #swagger.tags = ['Client']*/
+    /*  #swagger.tags = ['Personnalisation']*/
+    /*  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Create Carte Personnalisation',
+            schema: { $ref: '#/definitions/Personnalisation'}
+          }
+    */
     try {
         const dataBody = req.body
         validateCartePersonnalisationData(dataBody)
@@ -42,7 +48,13 @@ export const createCartePersonnalisation = CatchAsyncError(async (req: Request, 
 })
 
 export const updateCartePersonnalisation = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
-    /*  #swagger.tags = ['Client']*/
+    /*  #swagger.tags = ['Personnalisation']*/
+    /*  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Create Carte Personnalisation',
+            schema: { $ref: '#/definitions/Personnalisation'}
+          }
+    */
     try {
 
         const data = req.body

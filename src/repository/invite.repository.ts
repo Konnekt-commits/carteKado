@@ -1,6 +1,5 @@
 import dbConnection from "@/repository/db"
 import {ResultSetHeader} from "mysql2"
-import Client from "@/models/client.model"
 import Invite from "@/models/invite.model"
 
 interface DynamicObject {

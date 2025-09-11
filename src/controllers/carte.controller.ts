@@ -17,6 +17,12 @@ import Logging from "@/libraries/logging"
 
 export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Cartes']*/
+    /*  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Create new CarteKado',
+            schema: { $ref: '#/definitions/Carte'}
+          }
+    */
     try {
     const data = req.body
     const constraints: string[] = ["id_entreprise",
@@ -91,6 +97,12 @@ export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Respo
 
 export const updateCarteCadeau = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Cartes']*/
+    /*  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Update existing CarteKado',
+            schema: { $ref: '#/definitions/Carte'}
+          }
+    */
     try {
 
     const data = req.body

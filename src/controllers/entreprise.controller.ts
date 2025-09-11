@@ -15,6 +15,12 @@ export interface IEntrepriseBody {
 
 export const createEntreprise = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Entreprises']*/
+    /*  #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Create Entreprise',
+            schema: { $ref: '#/definitions/Entreprise'}
+          }
+    */
     try {
         const { raison_sociale, siren, adresse_facturation, email_facturation, tva_intracom} = req.body as IEntrepriseBody
 
@@ -75,7 +81,11 @@ export const retrieveAllEntreprises = CatchAsyncError(async (req: Request, res: 
     /*  #swagger.tags = ['Entreprises']*/
     try {
         Logging.info('Not implement')
-        // TODO yesss
+        const entreprises = await EntrepriseRepository.find({})
+        res.status(201).json({
+            status: true,
+            entreprises
+        })
     }catch (err: unknown) {
         const error = err as Error
         next(error)
