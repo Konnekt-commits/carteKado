@@ -58,7 +58,7 @@ export const userRegistration = CatchAsyncError(async (req: Request, res: Respon
 export const verifyUser = async (req:Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Users']*/
     try {
-        const { email, otp, password, id_entreprise} = req.body
+        const { email, otp, password, id_entreprise, role} = req.body
         if (!email || !otp || !password || !id_entreprise) {
             return  next(new ErrorHandler('All fields are required!', 400))
         }
@@ -74,7 +74,7 @@ export const verifyUser = async (req:Request, res: Response, next: NextFunction)
             id_entreprise,
             email,
             hash_mot_de_passe: hashedPassword,
-            role: Roles.EMPLOYER,
+            role: role ? role : Roles.EMPLOYER,
             actif: false,
             derniere_connexion: new Date()
         } as User
