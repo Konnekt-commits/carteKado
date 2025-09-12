@@ -18,6 +18,7 @@ import emailRoute from "@/routes/email.route"
 import produitRoute from "@/routes/produit.route"
 import ligneProduitRoute from "@/routes/ligneProduit.route"
 import carteModeleRoute from "@/routes/carteModele.route"
+import personnalisationRoute from "@/routes/personnalisation.route"
 
 import swaggerDocument from "swagger-output.json"
 
@@ -108,6 +109,7 @@ const StartServer = () => {
     router.use('/api/v1', produitRoute)
     router.use('/api/v1', ligneProduitRoute)
     router.use('/api/v1', carteModeleRoute)
+    router.use('/api/v1', personnalisationRoute)
 
     /* doc swagger route*/
     router.use('/api-docs', swaggerUi.serve)

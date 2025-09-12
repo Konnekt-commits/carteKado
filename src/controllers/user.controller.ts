@@ -23,7 +23,7 @@ import {RedisKey} from "ioredis"
 export const userRegistration = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Users']*/
     try {
-        validateRegistrationData(req.body)
+        validateRegistrationData(req.body, false)
         const { id_entreprise, email} = req.body
         const existingUser = await UserRepository.findOne({email})
 
@@ -85,6 +85,51 @@ export const verifyUser = async (req:Request, res: Response, next: NextFunction)
             success: true,
             message: 'User registered successfully',
             user
+        })
+    }catch (error) {
+        return next(error)
+    }
+}
+
+export const updateUserProfile = async (req:Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Users']*/
+    try {
+        const dataBody = req.body
+        validateRegistrationData(dataBody, true)
+        const {id_entreprise} = req.body
+        const id = parseInt(req.params.id, 10)
+
+        const existingUser = await UserRepository.findOneByID(id)
+        if (!existingUser) {
+            return next(new ErrorHandler('User Not found', 401))
+        }
+        delete dataBody.hash_mot_de_passe
+
+        if(id_entreprise) {
+            const entreprise = EntrepriseRepository.retrieveById(id_entreprise)
+            if (!entreprise) {
+                next(new ErrorHandler('inconsistent entreprise id found', 404))
+                return
+            }
+        }
+
+        const data = {
+            ...existingUser,
+            ...dataBody,
+            derniere_connexion: new Date(existingUser.derniere_connexion)
+        } as User
+
+        const affectedRows = await UserRepository.update(data)
+        if( affectedRows === 0) {
+            next(new ErrorHandler('Something went wrong! affected rows number is 0', 404))
+            return
+        }
+        delete data.hash_mot_de_passe
+        redis.set(<RedisKey> `user:${ data.id_user }`, JSON.stringify(data) as any)
+        res.status(201).json({
+            success: true,
+            message: 'User update successfully',
+            affectedRows
         })
     }catch (error) {
         return next(error)

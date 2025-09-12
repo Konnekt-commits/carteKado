@@ -6,12 +6,14 @@ import {sendEmail} from "@/utils/sendEmail/sendMail"
 const emailRegexPatten = /^((?:[A-Za-z0-9!#$%&'*+\-/=?^_`{|}~]|(?<=^|\.)"|"(?=$|\.|@)|(?<=".)[ .](?=.*")|(?<!\.)\.){1,64})(@)([A-Za-z0-9.-]*[A-Za-z0-9]\.[A-Za-z0-9]{2,})$/
 const passwordRegexPatten = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
 
-export const validateRegistrationData = (data: any) => {
+export const validateRegistrationData = (data: any, update: boolean) => {
     const { id_entreprise, email} = data
 
-    if ( [id_entreprise, email].some(el => el == null) ) {
-       throw new ErrorHandler(`id_entreprise, email, and password can not be nullable`, 400)
+    if(!update) {
+        if ( [id_entreprise, email].some(el => el == null) ) {
+            throw new ErrorHandler(`id_entreprise, email, and password can not be nullable`, 400)
 
+        }
     }
     if (!emailRegexPatten.test(email)) {
         throw new ErrorHandler('Invalid email format!', 400)
