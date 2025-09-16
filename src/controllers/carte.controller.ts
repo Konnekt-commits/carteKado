@@ -13,7 +13,7 @@ import {StatusEmail, TypeDestination} from "@/customTypes"
 import EmailRepository from "@/repository/email.repository"
 import {sendEmail} from "@/utils/sendEmail/sendMail"
 import Logging from "@/libraries/logging"
-
+import UserRepository from "@/repository/user.repository";
 
 export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Cartes']*/
@@ -73,7 +73,7 @@ export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Respo
         date_envoi: new Date(),
         statut: StatusEmail.ENVOYER
     } as Email
-    const email = await EmailRepository.save(newEmail)
+    await EmailRepository.save(newEmail)
     const addressToSendEmail = isClientExist.email ?? 'idrisstafo9@gmail.com'
     await sendEmail(addressToSendEmail, 'Nouvelle Card Cadeau', 'cadeau/notication', {
         username: isClientExist.nom,
@@ -125,15 +125,34 @@ export const updateCarteCadeau = CatchAsyncError(async (req: Request, res: Respo
 }
 })
 
-
 export const AllCartes = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Cartes']*/
     try {
-    const cartes = await CarteRepository.find({})
-    res.status(201).json({
-        success: true,
-        cartes
-    })
+        const cartes = await CarteRepository.find({})
+
+        const responses = await Promise.all(cartes
+            .map(async (carte) => {
+                const client = await ClientRepository.findOneByID(carte.id_client ?? 0)
+                const entreprise = await EntrepriseRepository.retrieveById(carte.id_entreprise ?? 0)
+                const invite = await InviteRepository.findOneByID(carte.id_invite ?? 0)
+                const user = await UserRepository.findOneByID(carte.id_user_createur ?? 0)
+                delete user.hash_mot_de_passe
+                delete carte.id_user_createur
+                delete carte.id_invite
+                delete carte.id_entreprise
+                delete carte.id_client
+                return {
+                    ...carte,
+                    client,
+                    entreprise,
+                    invite,
+                    user
+                }
+            }))
+        res.status(201).json({
+            success: true,
+            cartes: responses
+        })
 
 }catch (err: unknown) {
     const error = err as Error

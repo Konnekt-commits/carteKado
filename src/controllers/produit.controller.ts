@@ -4,7 +4,7 @@ import ErrorHandler from "@/utils/ErrorHandler"
 import EntrepriseRepository from "@/repository/entreprise.repository"
 import {redis} from "@/utils/redis"
 import Produit from "@/models/produit.model"
-import ProduitRepository from "@/repository/produit.repository";
+import ProduitRepository from "@/repository/produit.repository"
 
 export const createProduit = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Produits']*/
