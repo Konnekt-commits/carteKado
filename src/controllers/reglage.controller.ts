@@ -114,7 +114,7 @@ export const reglageInfo = CatchAsyncError(async (req: Request, res: Response, n
         const id = parseInt(req.params.id, 10)
         const reglage = await ReglageRepository.findOneByID(id)
 
-        if (!reglage){
+        if (!reglage) {
             next(new ErrorHandler('Reglage not found', 404))
             return
         }
@@ -152,20 +152,20 @@ export const reglageAddProduct = CatchAsyncError(async (req: Request, res: Respo
     try {
         const id = parseInt(req.params.id, 10)
         const {id_produit, produit} = req.body
-        if (!id_produit && !produit){
+        if (!id_produit && !produit) {
             next(new ErrorHandler('no data found to perform action', 404))
             return
         }
 
         const reglage = await ReglageRepository.findOneByID(id)
-        if (!reglage){
+        if (!reglage) {
             next(new ErrorHandler('Reglage not found', 404))
             return
         }
         const user = req?.user
-        if (id_produit){
+        if (id_produit) {
             const isProduitExist = await ProduitRepository.findOneByID(id_produit)
-            if (!isProduitExist){
+            if (!isProduitExist) {
                 next(new ErrorHandler('Product not found', 404))
                 return
             }
@@ -180,7 +180,7 @@ export const reglageAddProduct = CatchAsyncError(async (req: Request, res: Respo
             })
             return
         }
-        if (!produit){
+        if (!produit) {
             next(new ErrorHandler('please provide product to add by id or by product feature', 404))
             return
         }

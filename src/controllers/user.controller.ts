@@ -19,6 +19,7 @@ import {setCookie} from "@/utils/cookies/setCookies"
 import Logging from "@/libraries/logging"
 import { redis } from '@/utils/redis'
 import {RedisKey} from "ioredis"
+import ReglageRepository from "@/repository/reglage.repository";
 
 export const userRegistration = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Users']*/
@@ -178,6 +179,10 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
         setCookie(res, 'refresh_token', refreshToken)
         setCookie(res, 'access_token', accessToken)
         delete user.hash_mot_de_passe
+        const reglage = await ReglageRepository.findOne({
+            id_entreprise: user.id_entreprise
+        })
+        Logging.info(reglage)
         // upload session to redis
         redis.set(<RedisKey> `user:${ user.id_user }`, JSON.stringify(user) as any)
         res.status(200).json({
@@ -186,6 +191,7 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
             message: 'Login successful!',
             user,
             isFirstConnection,
+            reglage,
             accessToken,
             refreshToken
         })
