@@ -49,6 +49,10 @@ export const createReglage = CatchAsyncError(async (req: Request, res: Response,
     }
 })
 
+interface IProduitBody {
+    nom: string,
+    prix_ttc: number
+}
 export const updateReglage = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Reglage']*/
     /*  #swagger.parameters['body'] = {
@@ -60,7 +64,7 @@ export const updateReglage = CatchAsyncError(async (req: Request, res: Response,
     try {
 
         const data = req.body
-
+        const user = req?.user
         const id = parseInt(req.params.id, 10)
         const isReglagetExist = await ReglageRepository.findOneByID(id)
 
@@ -68,10 +72,14 @@ export const updateReglage = CatchAsyncError(async (req: Request, res: Response,
             next(new ErrorHandler('Reglage not found', 404))
             return
         }
+        const produits = data.produits as IProduitBody[]
+        delete data.produits
+        const validNumber = data.liste_montants.split(",").map(Number).filter(Boolean)
 
         const newReglage = {
             ...isReglagetExist,
-            ...data
+            ...data,
+            liste_montants: validNumber.join(',')
         } as Reglage
 
         const affectedRows = await ReglageRepository.update(newReglage)
@@ -79,6 +87,28 @@ export const updateReglage = CatchAsyncError(async (req: Request, res: Response,
         if( affectedRows === 0) {
             next(new ErrorHandler('Something went wrong! affected rows number is 0', 404))
             return
+        }
+
+        if (produits) {
+            if (produits.length === 0) {
+                next(new ErrorHandler('List of product cannot be nullable', 404))
+                return
+            }
+            await Promise.all(
+                produits.map(async (p) =>{
+                    const product_data = {
+                        ...p,
+                        id_entreprise: user?.id_entreprise,
+                        actif: true
+                    } as Produit
+                    const newProduct =await ProduitRepository.save(product_data)
+                    const new_line = {
+                        id_reglage: id,
+                        id_produit: newProduct.id_produit
+                    } as LigneReglage
+                    await LigneReglageRepository.save(new_line)
+                })
+            )
         }
 
         res.status(201).json({
