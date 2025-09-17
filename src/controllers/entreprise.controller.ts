@@ -4,6 +4,8 @@ import ErrorHandler from "@/utils/ErrorHandler"
 import EntrepriseRepository from "@/repository/entreprise.repository"
 import Entreprise from "@/models/entreprise.model"
 import Logging from "@/libraries/logging"
+import Reglage from "@/models/reglage.model"
+import ReglageRepository from "@/repository/reglage.repository"
 
 export interface IEntrepriseBody {
     raison_sociale: string
@@ -46,6 +48,13 @@ export const createEntreprise = CatchAsyncError(async (req: Request, res: Respon
             tva_intracom
         } as Entreprise
         const entreprise = await EntrepriseRepository.save(data)
+        const reglage = {
+            id_entreprise: entreprise.id_entreprise ?? 0,
+            nom_boutique: entreprise.raison_sociale + '_Boutique',
+            couleur: '#0D0C0C',
+            liste_montants: '25,50,75,100,150,200'
+        } as Reglage
+        await ReglageRepository.save(reglage)
         res.status(201).json({
             success: true,
             entreprise

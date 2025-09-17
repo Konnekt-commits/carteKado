@@ -118,6 +118,13 @@ const doc = {
             nom: 1,
             prix_ttc: 2000,
             actif: 0,
+        },
+        Reglage: {
+            id_entreprise: 1,
+            nom_boutique: "shop name",
+            couleur: "#F54927",
+            logo: " /the/path/to/logo.png",
+            liste_montants: " 15,25,50,100"
         }
     }
 

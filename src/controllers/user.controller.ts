@@ -75,8 +75,7 @@ export const verifyUser = async (req:Request, res: Response, next: NextFunction)
             email,
             hash_mot_de_passe: hashedPassword,
             role: role ? role : Roles.EMPLOYER,
-            actif: false,
-            derniere_connexion: new Date()
+            actif: false
         } as User
 
         const user = await UserRepository.save(data)
@@ -185,6 +184,7 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
             affectedRows,
             message: 'Login successful!',
             user,
+            isFirstConnection: !!user.derniere_connexion,
             accessToken,
             refreshToken
         })
