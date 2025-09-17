@@ -54,10 +54,11 @@ export const createEntreprise = CatchAsyncError(async (req: Request, res: Respon
             couleur: '#0D0C0C',
             liste_montants: '25,50,75,100,150,200'
         } as Reglage
-        await ReglageRepository.save(reglage)
+        const r = await ReglageRepository.save(reglage)
         res.status(201).json({
             success: true,
-            entreprise
+            entreprise,
+            reglage: r
         })
 
     }catch (err: unknown) {
