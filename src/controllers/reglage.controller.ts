@@ -8,6 +8,7 @@ import LigneReglageRepository from "@/repository/ligneReglage.repository";
 import ProduitRepository from "@/repository/produit.repository";
 import LigneReglage from "@/models/ligneReglage.model";
 import Produit from "@/models/produit.model";
+import Logging from "@/libraries/logging";
 
 export const createReglage = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Reglage']*/
@@ -74,6 +75,7 @@ export const updateReglage = CatchAsyncError(async (req: Request, res: Response,
         }
         const produits = data.produits as IProduitBody[]
         delete data.produits
+        delete data.id_reglage
         const validNumber = data.liste_montants.split(",").map(Number).filter(Boolean)
 
         const newReglage = {
@@ -92,14 +94,21 @@ export const updateReglage = CatchAsyncError(async (req: Request, res: Response,
         if (produits) {
             // delete all product
             const existingProducts = await LigneReglageRepository.find({
-                id_entreprise: id
+                id_reglage: id
             })
-            const ids = existingProducts.map((lp) =>{
+            Logging.info(existingProducts)
+            const ids_ligne: number[] = []
+            const ids_produits = existingProducts.map((lp) =>{
+                ids_ligne.push(lp.id_ligne ?? 0)
                 return lp.id_produit
             })
 
-            await LigneReglageRepository.deleteBatch(ids)
-            await ProduitRepository.deleteBatch(ids)
+            if (ids_ligne.length > 0) {
+                const affected = await LigneReglageRepository.deleteBatch(ids_ligne)
+            }
+            if (ids_produits.length > 0) {
+                await ProduitRepository.deleteBatch(ids_produits)
+            }
 
             if (produits.length === 0) {
                 next(new ErrorHandler('List of product cannot be nullable', 404))
