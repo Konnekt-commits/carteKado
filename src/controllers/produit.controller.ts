@@ -109,6 +109,31 @@ export const AllProduits = CatchAsyncError(async (req: Request, res: Response, n
     }
 })
 
+export const searchProduits = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
+    /*  #swagger.tags = ['Produits']*/
+    try {
+        const pattern = req.query.q as string
+        if (!pattern || pattern.length <3){
+            next(new ErrorHandler('Pattern length must be greeter than 2 characters', 400))
+            return
+        }
+        const id_entreprise = req?.user?.id_entreprise
+
+        const produits = await ProduitRepository.find({
+            id_entreprise,
+            nom: pattern
+        })
+        res.status(201).json({
+            success: true,
+            produits
+        })
+
+    }catch (err: unknown) {
+        const error = err as Error
+        next(error)
+    }
+})
+
 export const produitInfo = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Produits']*/
     try {

@@ -6,7 +6,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 
 -- =====================================================================
--- 9) MODELE DE CARTE
+-- 9) REGLAGE DE CARTE
 -- =====================================================================
 CREATE TABLE reglage (
                               id_reglage       INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -19,7 +19,7 @@ CREATE TABLE reglage (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =====================================================================
--- 10) personnalisation de carte
+-- 10) LIGNE reglage de carte et produits
 -- =====================================================================
 CREATE TABLE ligne_reglage_produit (
                                         id_ligne INT UNSIGNED NOT NULL AUTO_INCREMENT,

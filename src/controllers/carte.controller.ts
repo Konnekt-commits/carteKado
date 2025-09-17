@@ -185,7 +185,7 @@ export const deleteCarte = CatchAsyncError(async (req: Request, res: Response, n
         next(new ErrorHandler('Carte not found', 404))
         return
     }
-    await ClientRepository.delete(id)
+    await CarteRepository.delete(id)
     await redis.del(`carte:${id}`)
     await redis.del('allCartes')
 

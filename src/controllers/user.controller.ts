@@ -184,7 +184,7 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
             affectedRows,
             message: 'Login successful!',
             user,
-            isFirstConnection: !!user.derniere_connexion,
+            isFirstConnection: !user.derniere_connexion,
             accessToken,
             refreshToken
         })

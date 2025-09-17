@@ -125,6 +125,12 @@ const doc = {
             couleur: "#F54927",
             logo: " /the/path/to/logo.png",
             liste_montants: " 15,25,50,100"
+        },
+        IProduit: {
+            id_produit: 1 | undefined,
+            produit: {
+                $ref: '#/definitions/Produit'
+            }
         }
     }
 

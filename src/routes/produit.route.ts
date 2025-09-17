@@ -2,7 +2,14 @@ import express from 'express'
 import {isAuthenticated} from "@/middleware/auth"
 import {authorizeRoles} from "@/controllers/user.controller"
 import {Roles} from "@/customTypes"
-import {AllProduits, createProduit, deleteProduit, produitInfo, updateProduit} from "@/controllers/produit.controller"
+import {
+    AllProduits,
+    createProduit,
+    deleteProduit,
+    produitInfo,
+    searchProduits,
+    updateProduit
+} from "@/controllers/produit.controller"
 
 const router = express.Router()
 
@@ -10,5 +17,6 @@ router.post('/create-produit',isAuthenticated,authorizeRoles(Roles.ADMIN), creat
 router.get('/produit/:id', produitInfo)
 router.put('/produit-update/:id',isAuthenticated, authorizeRoles(Roles.ADMIN), updateProduit)
 router.get('/produits', AllProduits)
+router.get('/search-produit',isAuthenticated, searchProduits)
 router.delete('/delete-produit/:id',isAuthenticated, authorizeRoles(Roles.ADMIN), deleteProduit)
 export default router
