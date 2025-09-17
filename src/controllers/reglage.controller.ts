@@ -50,7 +50,7 @@ export const createReglage = CatchAsyncError(async (req: Request, res: Response,
 })
 
 export const updateReglage = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
-    /*  #swagger.tags = ['Reglages']*/
+    /*  #swagger.tags = ['Reglage']*/
     /*  #swagger.parameters['body'] = {
             in: 'body',
             description: 'Update reglage',
@@ -94,7 +94,7 @@ export const updateReglage = CatchAsyncError(async (req: Request, res: Response,
 })
 
 export const AllReglagesByEntreprise = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
-    /*  #swagger.tags = ['Reglages']*/
+    /*  #swagger.tags = ['Reglage']*/
     try {
         const reglages = await ReglageRepository.find({})
         res.status(201).json({
@@ -109,7 +109,7 @@ export const AllReglagesByEntreprise = CatchAsyncError(async (req: Request, res:
 })
 
 export const reglageInfo = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
-    /*  #swagger.tags = ['Produits']*/
+    /*  #swagger.tags = ['Reglage']*/
     try {
         const id = parseInt(req.params.id, 10)
         const reglage = await ReglageRepository.findOneByID(id)
@@ -142,7 +142,7 @@ export const reglageInfo = CatchAsyncError(async (req: Request, res: Response, n
 })
 
 export const reglageAddProduct = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
-    /*  #swagger.tags = ['Produits']*/
+    /*  #swagger.tags = ['Reglage']*/
     /*  #swagger.parameters['body'] = {
             in: 'body',
             description: 'Update reglage',
@@ -211,9 +211,8 @@ export const reglageAddProduct = CatchAsyncError(async (req: Request, res: Respo
     }
 })
 
-
 export const deleteReglage = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
-    /*  #swagger.tags = ['Produits']*/
+    /*  #swagger.tags = ['Reglage']*/
     try {
         const id = parseInt(req.params.id, 10)
         const reglage = await ReglageRepository.findOneByID(id)
