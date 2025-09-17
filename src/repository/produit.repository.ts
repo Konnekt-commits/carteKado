@@ -21,6 +21,7 @@ interface IProduitRepository {
     update(produit: Produit): Promise<number>
     find(data: DynamicObject): Promise<Produit[]>
     delete(id_produit: number): Promise<number>
+    deleteBatch(ids: number[]): Promise<number>
 }
 
 class ProduitRepository implements IProduitRepository {
@@ -121,6 +122,16 @@ class ProduitRepository implements IProduitRepository {
                     else resolve(res.affectedRows)
                 }
             )
+        })
+    }
+
+    deleteBatch(ids: number[]): Promise<number> {
+        const query: string = `DELETE FROM produit WHERE id_produit IN (${ids.join(',')});`
+        return  new Promise((resolve, reject) => {
+            dbConnection.query<ResultSetHeader>(query,(err,res) =>{
+                if (err) reject(err)
+                else resolve(res.affectedRows)
+            })
         })
     }
 }

@@ -22,6 +22,7 @@ interface ILigneRepositoryRepository {
     update(ligneReglage: LigneReglage): Promise<number>
     find(data: DynamicObject): Promise<LigneReglage[]>
     delete(ligne_id: number): Promise<number>
+    deleteBatch(ids: number[]): Promise<number>
 }
 
 class LigneRepositoryRepository implements ILigneRepositoryRepository {
@@ -120,6 +121,15 @@ class LigneRepositoryRepository implements ILigneRepositoryRepository {
                     else resolve(res.affectedRows)
                 }
             )
+        })
+    }
+    deleteBatch(ids: number[]): Promise<number> {
+        const query: string = `DELETE FROM ligne_reglage_produit WHERE id_ligne IN (${ids.join(',')});`
+        return  new Promise((resolve, reject) => {
+            dbConnection.query<ResultSetHeader>(query,(err,res) =>{
+                if (err) reject(err)
+                else resolve(res.affectedRows)
+            })
         })
     }
 }

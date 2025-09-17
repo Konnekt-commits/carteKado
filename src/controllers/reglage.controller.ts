@@ -90,6 +90,17 @@ export const updateReglage = CatchAsyncError(async (req: Request, res: Response,
         }
 
         if (produits) {
+            // delete all product
+            const existingProducts = await LigneReglageRepository.find({
+                id_entreprise: id
+            })
+            const ids = existingProducts.map((lp) =>{
+                return lp.id_produit
+            })
+
+            await LigneReglageRepository.deleteBatch(ids)
+            await ProduitRepository.deleteBatch(ids)
+
             if (produits.length === 0) {
                 next(new ErrorHandler('List of product cannot be nullable', 404))
                 return
