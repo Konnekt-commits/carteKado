@@ -184,7 +184,9 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
             success: true,
             affectedRows,
             message: 'Login successful!',
-            user
+            user,
+            accessToken,
+            refreshToken
         })
     }catch (error) {
         return next(error)
@@ -227,7 +229,10 @@ export const refreshToken = async (req: Request, res: Response, next: NextFuncti
 
         setCookie(res, 'access_token', newAccessToken)
 
-        return res.status(201).json({ success: true})
+        return res.status(201).json({
+            success: true,
+            accessToken: newAccessToken
+        })
     } catch (error) {
         return next(error)
     }
