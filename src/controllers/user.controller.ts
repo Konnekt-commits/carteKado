@@ -170,6 +170,7 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
                 expiresIn: refreshTokenExpiresIn * 24 * 60 * 60 * 1000
             }
         )
+        const isFirstConnection = !user.derniere_connexion
         user.derniere_connexion = new Date()
 
         const affectedRows = await UserRepository.update(user)
@@ -184,7 +185,7 @@ export const loginUser = async (req: Request, res: Response, next: NextFunction)
             affectedRows,
             message: 'Login successful!',
             user,
-            isFirstConnection: !user.derniere_connexion,
+            isFirstConnection,
             accessToken,
             refreshToken
         })
