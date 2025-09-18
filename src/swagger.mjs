@@ -58,19 +58,29 @@ const doc = {
             pays:"tunisie",
             adresse:"raoued nour-jafer"
         },
+        ProduitBody:{
+            id: 1,
+            quantite:3
+        },
+        InviteBody:{
+            sobriquet: "ton petit coeur",
+            email: "my_custom@email.com"
+        },
         Carte: {
-            id_entreprise: 1,
-            id_client: 1,
-            id_invite: 1,
-            id_user_createur: 2,
-            code: "dfdsfs5246",
-            type_valeur: "montant/panier_produits",
-            montant_initial: 9658.25,
-            montant_restant: 1500,
-            couleur: "#F54927",
-            date_emission: "9/20/2025, 9:10:47 AM",
-            date_expiration: "9/20/2025, 9:10:47 AM",
-            statut: "active"
+            couleur: "#FF0F0F0",
+            montant_initial: 50,
+            produits: [
+                {
+                    $ref: '#/definitions/ProduitsBody'
+                }
+            ],
+            expire: 15,
+            invite :{
+                $ref: "#/definitions/InviteBody"
+            },
+            client :{
+                $ref: "#/definitions/InviteBody"
+            }
         },
         CarteModel: {
             nom: "carte model 1",

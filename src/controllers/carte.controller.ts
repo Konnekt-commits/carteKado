@@ -9,11 +9,15 @@ import InviteRepository from "@/repository/invite.repository"
 import Carte from "@/models/carte.model"
 import CarteRepository from "@/repository/carte.repository"
 import Email from "@/models/email.model"
-import {StatusEmail, TypeDestination} from "@/customTypes"
+import {Status, StatusEmail, TypeDestination, TypeValeur} from "@/customTypes"
 import EmailRepository from "@/repository/email.repository"
 import {sendEmail} from "@/utils/sendEmail/sendMail"
-import Logging from "@/libraries/logging"
-import UserRepository from "@/repository/user.repository";
+import UserRepository from "@/repository/user.repository"
+import {validateCarteKadoData} from "@/helpers/carte.helper"
+import Invite from "@/models/invite.model"
+import Client from "@/models/client.model"
+import LigneProduit from "@/models/ligneProduit.model"
+import LigneProduitRepository from "@/repository/ligneProduit.repository"
 
 export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Cartes']*/
@@ -24,64 +28,93 @@ export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Respo
           }
     */
     try {
-    const data = req.body
-    const constraints: string[] = ["id_entreprise",
-        "id_client",
-        "id_invite",
-        "date_expiration",
-        // "code",
-        "type_valeur",
-        "montant_restant",
-        "statut"]
-    const notDefine = constraints.filter(x => !Object.keys(data).includes(x) || x == null)
-    Logging.info(new Date())
-    if ( notDefine.length > 0) {
-        next(new ErrorHandler(`${notDefine.join(',')}, can not be nullable`, 400))
-        return
-    }
+        const dataBody = req.body
+        const user = req?.user
+        validateCarteKadoData(dataBody)
+        const { montant_initial, expire, produits, couleur} = req.body
 
-    const isEntrepiseExist = await EntrepriseRepository.retrieveById(data.id_entreprise)
-    const isInviteExist = await  InviteRepository.findOneByID(data.id_invite)
-    const isClientExist = await  ClientRepository.findOneByID(data.id_client)
-    if (!isEntrepiseExist || !isInviteExist || !isClientExist) {
-        next(new ErrorHandler('Something went wrong! make sure that entreprise or invite or client exist', 400))
-        return
-    }
+        // expires date
+        const expires_date = new Date()
+        const currentDay = expires_date.getDate()
+        expires_date.setDate(currentDay + expire)
 
-    const newData = {
-        id_entreprise: data.id_entreprise,
-        id_client: data.id_client,
-        id_invite: data.id_invite,
-        id_user_createur: req.user?.id_user,
-        code: data.code ? data.code : uuidv4(),
-        type_valeur: data.type_valeur,
-        montant_initial: data.montant_initial ? data.montant_initial : undefined,
-        montant_restant: data.montant_restant,
-        couleur: data.couleur ? data.couleur : undefined,
-        date_emission: new Date(),
-        date_expiration: new Date(data.date_expiration),
-        statut: data.statut
+        // create invite
+        const {invite} = req.body
+        const isInviteExist = await InviteRepository.findOne({email: invite.email})
+        const inviteData = isInviteExist
+            ? isInviteExist
+            : await InviteRepository.save({nom: invite.sobriquet, email: invite.email} as Invite)
 
-    } as Carte
+        // create client
+        const {client} = req.body
+        const isClientExist = await ClientRepository.findOne({email: invite.email})
+        const clientData = isClientExist
+            ? isClientExist
+            : await ClientRepository.save({nom: client.sobriquet, email: client.email, id_entreprise: user?.id_entreprise} as Client)
 
-    const carte = await CarteRepository.save(newData)
+        let carte: Carte | undefined = undefined
+
+        if (montant_initial) {
+            // Case 1: it is carteValue type
+            const carteData = {
+                id_entreprise: user?.id_entreprise,
+                id_client: clientData.id_client,
+                id_invite: inviteData.id_invite,
+                id_user_createur: user?.id_user,
+                code: uuidv4(),
+                type_valeur: TypeValeur.MONTANT,
+                montant_initial: montant_initial,
+                montant_restant: montant_initial,
+                couleur,
+                date_emission: new Date,
+                date_expiration: expires_date,
+                statut: Status.ACTIVE
+            } as Carte
+            carte = await CarteRepository.save(carteData)
+        }
+        if (produits) {
+            // Case 2: it is product package type
+            const carteData = {
+                id_entreprise: user?.id_entreprise,
+                id_client: clientData.id_client,
+                id_invite: inviteData.id_invite,
+                id_user_createur: user?.id_user,
+                code: uuidv4(),
+                type_valeur: TypeValeur.PAN_PRODUITS,
+                montant_restant: 0,
+                couleur,
+                date_emission: new Date,
+                date_expiration: expires_date,
+                statut: Status.ACTIVE
+            } as Carte
+            carte = await CarteRepository.save(carteData)
+            await Promise.all(
+                produits.map(async (produit: { id: number, quantite?: number }) =>{
+                    const lineData = {
+                        id_carte: carte?.id_carte ?? 0,
+                        id_produit: produit.id,
+                        quantite: produit.quantite ?? 1
+                    } as LigneProduit
+                    await LigneProduitRepository.save(lineData)
+                })
+            )
+        }
+
     const newEmail= {
-        id_carte: carte.id_carte
+        id_carte: carte?.id_carte
 ,            dest_type: TypeDestination.CLIENT,
-        dest_email: isClientExist.email,
+        dest_email: clientData.email,
         template_code: 'template code',
         date_envoi: new Date(),
         statut: StatusEmail.ENVOYER
     } as Email
     await EmailRepository.save(newEmail)
-    const addressToSendEmail = isClientExist.email ?? 'idrisstafo9@gmail.com'
+    const addressToSendEmail = inviteData.email ?? 'idrisstafo9@gmail.com'
     await sendEmail(addressToSendEmail, 'Nouvelle Card Cadeau', 'cadeau/notication', {
-        username: isClientExist.nom,
-        name: isEntrepiseExist.raison_sociale,
-        type: carte.type_valeur,
-        valueInitial: carte.montant_initial,
-        value: carte.montant_restant,
-        expires: carte.date_expiration
+        username: inviteData.nom,
+        name: clientData.nom,
+        type: carte?.type_valeur,
+        expires: carte?.date_expiration
     })
 
     res.status(201).json({

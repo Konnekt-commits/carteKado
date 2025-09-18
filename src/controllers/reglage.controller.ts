@@ -4,11 +4,11 @@ import ErrorHandler from "@/utils/ErrorHandler"
 import EntrepriseRepository from "@/repository/entreprise.repository"
 import Reglage from "@/models/reglage.model"
 import ReglageRepository from "@/repository/reglage.repository"
-import LigneReglageRepository from "@/repository/ligneReglage.repository";
-import ProduitRepository from "@/repository/produit.repository";
-import LigneReglage from "@/models/ligneReglage.model";
-import Produit from "@/models/produit.model";
-import Logging from "@/libraries/logging";
+import LigneReglageRepository from "@/repository/ligneReglage.repository"
+import ProduitRepository from "@/repository/produit.repository"
+import LigneReglage from "@/models/ligneReglage.model"
+import Produit from "@/models/produit.model"
+import Logging from "@/libraries/logging"
 
 export const createReglage = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Reglage']*/
