@@ -1,7 +1,6 @@
 import dbConnection from "@/repository/db"
 import {ResultSetHeader} from "mysql2"
-import Carte from "@/models/carte.model";
-
+import Carte from "@/models/carte.model"
 
 interface DynamicObject {
     [key: string]: any; // Defines that any string key will have a value of 'any' type
@@ -35,19 +34,21 @@ class CarteRepository implements ICarteRepository {
                 "id_invite,\n" +
                 "id_user_createur,\n" +
                 "code,\n" +
+                "message,\n" +
                 "type_valeur,\n" +
                 "montant_initial,\n" +
                 "montant_restant,\n" +
                 "couleur,\n" +
                 "date_emission,\n" +
                 "date_expiration,\n" +
-                "statut) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
+                "statut) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 [
                     carte.id_entreprise,
                     carte.id_client,
                     carte.id_invite,
                     carte.id_user_createur,
                     carte.code,
+                    carte.message,
                     carte.type_valeur,
                     carte.montant_initial,
                     carte.montant_restant,
@@ -99,13 +100,14 @@ class CarteRepository implements ICarteRepository {
     update(carte: Carte): Promise<number> {
         return new Promise((resolve, reject) => {
             dbConnection.query<ResultSetHeader>(
-                "UPDATE carte_cadeau SET id_entreprise = ?, id_client = ?, id_invite = ?, id_user_createur = ?, code = ?, type_valeur = ?, montant_initial = ?, montant_restant = ?, couleur = ?, date_emission = ?, date_expiration = ?, statut = ? WHERE id_carte = ?",
+                "UPDATE carte_cadeau SET id_entreprise = ?, id_client = ?, id_invite = ?, id_user_createur = ?, code = ?, message = ?, type_valeur = ?, montant_initial = ?, montant_restant = ?, couleur = ?, date_emission = ?, date_expiration = ?, statut = ? WHERE id_carte = ?",
                 [
                     carte.id_entreprise,
                     carte.id_client,
                     carte.id_invite,
                     carte.id_user_createur,
                     carte.code,
+                    carte.message,
                     carte.type_valeur,
                     carte.montant_initial,
                     carte.montant_restant,
@@ -133,7 +135,7 @@ class CarteRepository implements ICarteRepository {
             q.map((c, index) => {
                 if (c.key === 'id_carte' || c.key === 'id_entreprise') {
                     partial = `${c.key} = ${c.value}`
-                }else if( c.key === 'code' || c.key === 'couleur') {
+                }else if( c.key === 'code' || c.key === 'couleur' || c.key === 'message') {
                     partial = `LOWER(${c.key}) LIKE '%${c.value}%'`
                 }
                 if (index === 0) {

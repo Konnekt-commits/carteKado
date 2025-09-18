@@ -31,7 +31,7 @@ export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Respo
         const dataBody = req.body
         const user = req?.user
         validateCarteKadoData(dataBody)
-        const { montant_initial, expire, produits, couleur} = req.body
+        const { montant_initial, expire, produits, couleur, message} = req.body
 
         // expires date
         const expires_date = new Date()
@@ -62,6 +62,7 @@ export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Respo
                 id_invite: inviteData.id_invite,
                 id_user_createur: user?.id_user,
                 code: uuidv4(),
+                message: message,
                 type_valeur: TypeValeur.MONTANT,
                 montant_initial: montant_initial,
                 montant_restant: montant_initial,
@@ -80,6 +81,7 @@ export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Respo
                 id_invite: inviteData.id_invite,
                 id_user_createur: user?.id_user,
                 code: uuidv4(),
+                message: message,
                 type_valeur: TypeValeur.PAN_PRODUITS,
                 montant_restant: 0,
                 couleur,

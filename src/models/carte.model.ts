@@ -8,6 +8,7 @@ export default interface Carte extends RowDataPacket {
     id_invite?: number
     id_user_createur?: number
     code?: string
+    message?: string
     type_valeur?: TypeValeur
     montant_initial?: number
     montant_restant?: number
