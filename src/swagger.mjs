@@ -69,6 +69,7 @@ const doc = {
         Carte: {
             couleur: "#FF0F0F0",
             montant_initial: 50,
+            message: "something to send ha message",
             produits: [
                 {
                     $ref: '#/definitions/ProduitsBody'

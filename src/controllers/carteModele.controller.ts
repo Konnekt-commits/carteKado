@@ -2,9 +2,9 @@ import {CatchAsyncError} from "@/middleware/catchAsyncError"
 import {NextFunction, Request, Response} from "express"
 import ErrorHandler from "@/utils/ErrorHandler"
 import {redis} from "@/utils/redis"
-import {validateCarteModeleData} from "@/helpers/carteModele.helper";
-import CarteModele from "@/models/carteModel.model";
-import CarteModeleRepository from "@/repository/carteModele.repository";
+import {validateCarteModeleData} from "@/helpers/carteModele.helper"
+import CarteModele from "@/models/carteModel.model"
+import CarteModeleRepository from "@/repository/carteModele.repository"
 
 export const createCarteModele = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Cartes Modele']*/

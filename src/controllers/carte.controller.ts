@@ -18,6 +18,7 @@ import Invite from "@/models/invite.model"
 import Client from "@/models/client.model"
 import LigneProduit from "@/models/ligneProduit.model"
 import LigneProduitRepository from "@/repository/ligneProduit.repository"
+import {CarteEnhanceCarteService, getAllProductsByCarteService} from "@/services/carte.service";
 
 export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Cartes']*/
@@ -139,25 +140,13 @@ export const updateCarteCadeau = CatchAsyncError(async (req: Request, res: Respo
           }
     */
     try {
+        const data = req.body
 
-    const data = req.body
-    // const affectedRows = await CarteRepository.update(newClient)
 
-    // if( affectedRows === 0) {
-    //     next(new ErrorHandler('Something went wrong! affected rows number is 0', 404))
-    //     return
-    // }
-    //
-    // res.status(201).json({
-    //     success: true,
-    //     affectedRows,
-    //     message: 'client is successfully update'
-    // })
-
-}catch (err: unknown) {
-    const error = err as Error
-    next(error)
-}
+        }catch (err: unknown) {
+            const error = err as Error
+            next(error)
+        }
 })
 
 export const AllCartes = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
@@ -167,21 +156,11 @@ export const AllCartes = CatchAsyncError(async (req: Request, res: Response, nex
 
         const responses = await Promise.all(cartes
             .map(async (carte) => {
-                const client = await ClientRepository.findOneByID(carte.id_client ?? 0)
-                const entreprise = await EntrepriseRepository.retrieveById(carte.id_entreprise ?? 0)
-                const invite = await InviteRepository.findOneByID(carte.id_invite ?? 0)
-                const user = await UserRepository.findOneByID(carte.id_user_createur ?? 0)
-                delete user.hash_mot_de_passe
-                delete carte.id_user_createur
-                delete carte.id_invite
-                delete carte.id_entreprise
-                delete carte.id_client
+                const produits = await getAllProductsByCarteService(carte)
+                const carteEnhance = await CarteEnhanceCarteService(carte)
                 return {
-                    ...carte,
-                    client,
-                    entreprise,
-                    invite,
-                    user
+                    ...carteEnhance,
+                    produits,
                 }
             }))
         res.status(201).json({
@@ -198,12 +177,21 @@ export const AllCartes = CatchAsyncError(async (req: Request, res: Response, nex
 export const CarteInfo = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     /*  #swagger.tags = ['Cartes']*/
     try {
-    const carteID = parseInt(req.params.id, 10)
-    const carte = await CarteRepository.findOneByID(carteID)
-    res.status(201).json({
-        success: true,
-        carte
-    })
+        const carteID = parseInt(req.params.id, 10)
+        const carte = await CarteRepository.findOneByID(carteID)
+        if (!carte) {
+            next(new ErrorHandler('Carte not found', 404))
+            return
+        }
+        const produits = await getAllProductsByCarteService(carte)
+        const carteEnhance = await CarteEnhanceCarteService(carte)
+        res.status(201).json({
+            success: true,
+            carte: {
+                ...carteEnhance,
+                produits
+            }
+        })
 
 }catch (err: unknown) {
     const error = err as Error
