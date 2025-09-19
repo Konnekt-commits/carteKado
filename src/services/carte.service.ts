@@ -2,10 +2,10 @@ import Carte from "@/models/carte.model"
 import {TypeValeur} from "@/customTypes"
 import LigneProduitRepository from "@/repository/ligneProduit.repository"
 import ProduitRepository from "@/repository/produit.repository"
-import ClientRepository from "@/repository/client.repository";
-import EntrepriseRepository from "@/repository/entreprise.repository";
-import InviteRepository from "@/repository/invite.repository";
-import UserRepository from "@/repository/user.repository";
+import ClientRepository from "@/repository/client.repository"
+import EntrepriseRepository from "@/repository/entreprise.repository"
+import InviteRepository from "@/repository/invite.repository"
+import UserRepository from "@/repository/user.repository"
 
 export const getAllProductsByCarteService = async (carte: Carte) => {
     // check type

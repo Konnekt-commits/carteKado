@@ -92,10 +92,10 @@ export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Respo
             } as Carte
             carte = await CarteRepository.save(carteData)
             await Promise.all(
-                produits.map(async (produit: { id: number, quantite?: number }) =>{
+                produits.map(async (produit: { id_produit: number, quantite?: number }) =>{
                     const lineData = {
                         id_carte: carte?.id_carte ?? 0,
-                        id_produit: produit.id,
+                        id_produit: produit.id_produit,
                         quantite: produit.quantite ?? 1
                     } as LigneProduit
                     await LigneProduitRepository.save(lineData)
