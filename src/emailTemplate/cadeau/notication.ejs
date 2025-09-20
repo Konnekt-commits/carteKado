@@ -10,5 +10,14 @@
 <p> <%= name %>, vous auffre une carte de type <%= type %></p>
 
 <p>veillez profiter de votre cadeau avant la date du <%= expires %></p>
+
+<% if (typeof iframeString !== 'undefined') {%>
+    <iframe
+            title="iframe email"
+            srcdoc=<%- '"' + iframeString +'"'%>
+    >
+    </iframe>
+
+<% } %>
 </body>
 </html>

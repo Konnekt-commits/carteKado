@@ -33,7 +33,7 @@ export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Respo
         const dataBody = req.body
         const user = req?.user
         validateCarteKadoData(dataBody)
-        const { montant_initial, expire, produits, couleur, message} = req.body
+        const { montant_initial, expire, produits, couleur, message, iframe} = req.body
 
         // expires date
         const expires_date = new Date()
@@ -101,7 +101,7 @@ export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Respo
         dest_email: clientData.email,
         template_code: 'template code',
         date_envoi: new Date(),
-        statut: StatusEmail.ENVOYER
+        statut: StatusEmail.ENVOYER,
     } as Email
     await EmailRepository.save(newEmail)
     const addressToSendEmail = inviteData.email ?? 'idrisstafo9@gmail.com'
@@ -109,7 +109,8 @@ export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Respo
         username: inviteData.nom,
         name: clientData.nom,
         type: carte?.type_valeur,
-        expires: carte?.date_expiration
+        expires: carte?.date_expiration,
+        iframeString: iframe ? iframe : undefined
     })
 
     res.status(201).json({
