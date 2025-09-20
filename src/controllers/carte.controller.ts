@@ -49,7 +49,7 @@ export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Respo
 
         // create client
         const {client} = req.body
-        const isClientExist = await ClientRepository.findOne({email: invite.email})
+        const isClientExist = await ClientRepository.findOne({email: client.email})
         const clientData = isClientExist
             ? isClientExist
             : await ClientRepository.save({nom: client.sobriquet, email: client.email, id_entreprise: user?.id_entreprise} as Client)

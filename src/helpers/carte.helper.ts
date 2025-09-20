@@ -9,7 +9,7 @@ export const validateCarteKadoData = (data: any) => {
     if (couleur && !colorPattern.test(couleur)) {
         throw new ErrorHandler('Invalid color format!', 400)
     }
-    if (expire && expire >= 365) {
+    if (expire && expire >= 9999) {
         throw new ErrorHandler('expires days cannot be greeter than 365', 400)
     }
     if (invite && !emailRegexPatten.test(invite.email)) {
