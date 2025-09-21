@@ -1,12 +1,13 @@
+import QRCode from 'qrcode'
 import Carte from "@/models/carte.model"
-import {TypeValeur} from "@/customTypes"
+import {Base64, CarteKadoIntentParams, ImageType, QRResult, TypeValeur} from "@/customTypes"
 import LigneProduitRepository from "@/repository/ligneProduit.repository"
 import ProduitRepository from "@/repository/produit.repository"
 import ClientRepository from "@/repository/client.repository"
 import EntrepriseRepository from "@/repository/entreprise.repository"
 import InviteRepository from "@/repository/invite.repository"
 import UserRepository from "@/repository/user.repository"
-import LigneProduit from "@/models/ligneProduit.model";
+import LigneProduit from "@/models/ligneProduit.model"
 
 export const getAllProductsByCarteService = async (carte: Carte) => {
     // check type
@@ -75,4 +76,39 @@ export const addProductService = async (produits: IProduitBody[], id_carte: numb
             await LigneProduitRepository.save(lineData)
         })
     )
+}
+
+/**
+ * Validates the required parameters for generating CarteKado intent.
+ * @param {Object} params - The parameters object containing email cleint and invite.
+ * @returns {string} - An error message if validation fails, otherwise an empty string.
+ * */
+function validate<T extends { invite: string, client: string }>({ invite, client }: T): string {
+    if (!invite || !client) return "destination  address/name is compulsory"
+    return ''
+}
+
+export const carteKadoQRService = ({
+    id_carte: id,
+    invite_email: invite,
+    client_email: client,
+    montant_initial: am,
+    montant_restant: r,
+    carte_type: t
+                          }: CarteKadoIntentParams,
+                          qrOptions?: QRCode.QRCodeToDataURLOptions): Promise<QRResult> => {
+ const params: any = Object.assign({invite, client}, Object.fromEntries(Object.entries({id, invite, client, am, r, t}).filter(
+     ([_, value]) => value
+ )))
+    const error = validate(params)
+    if (error) return Promise.reject(new Error(error))
+    const intent = 'https://api.cartekado.fr/api-docs' + new URLSearchParams(params).toString()
+
+    return new Promise((resolve, reject) => {
+        QRCode
+            .toDataURL(intent, qrOptions)
+            .then((base64Data: string) => resolve({ qr: base64Data as Base64<ImageType>, intent} as QRResult))
+            .catch(err => reject(new Error("Unable to generate CarteKado QR Code. \n" + err)))
+
+    })
 }

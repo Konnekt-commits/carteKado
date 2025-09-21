@@ -9,11 +9,17 @@ import {CatchAsyncError} from "@/middleware/catchAsyncError"
 // authenticate user
 export const isAuthenticated = CatchAsyncError(async (req: Request, res: Response, next: NextFunction) => {
     const access_token = req.cookies.access_token
-    if (!access_token) {
+    const authHeader = req.headers['authorization']
+
+    const bearerToken = authHeader && authHeader.split(' ')[1]
+    if (!access_token && !bearerToken) {
         next(new ErrorHandler('Please login to access this resource', 401))
         return
     }
-    const decoded = jwt.verify(access_token, process.env.ACCESS_TOKEN as string) as JwtPayload
+
+    const decoded = access_token
+        ? jwt.verify(access_token, process.env.ACCESS_TOKEN as string) as JwtPayload
+        : jwt.verify(bearerToken!, process.env.ACCESS_TOKEN as string) as JwtPayload
     if (!decoded) {
         next(new ErrorHandler('access token not valid', 400))
         return

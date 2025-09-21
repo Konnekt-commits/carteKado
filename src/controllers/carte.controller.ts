@@ -16,7 +16,7 @@ import Invite from "@/models/invite.model"
 import Client from "@/models/client.model"
 import {
     addProductService,
-    CarteEnhanceCarteService,
+    CarteEnhanceCarteService, carteKadoQRService,
     deleteProductCarteService,
     getAllProductsByCarteService
 } from "@/services/carte.service"
@@ -95,28 +95,39 @@ export const createCarteCadeau = CatchAsyncError(async (req: Request, res: Respo
             await addProductService(produits, carte.id_carte ?? 0)
         }
 
-    const newEmail= {
-        id_carte: carte?.id_carte
-,            dest_type: TypeDestination.CLIENT,
-        dest_email: clientData.email,
-        template_code: 'template code',
-        date_envoi: new Date(),
-        statut: StatusEmail.ENVOYER,
-    } as Email
-    await EmailRepository.save(newEmail)
-    const addressToSendEmail = inviteData.email ?? 'idrisstafo9@gmail.com'
-    await sendEmail(addressToSendEmail, 'Nouvelle Card Cadeau', 'cadeau/notication', {
-        username: inviteData.nom,
-        name: clientData.nom,
-        type: carte?.type_valeur,
-        expires: carte?.date_expiration,
-        iframeString: iframe ? iframe : undefined
-    })
+        const newEmail= {
+            id_carte: carte?.id_carte
+    ,            dest_type: TypeDestination.CLIENT,
+            dest_email: clientData.email,
+            template_code: 'template code',
+            date_envoi: new Date(),
+            statut: StatusEmail.ENVOYER,
+        } as Email
+        await EmailRepository.save(newEmail)
 
-    res.status(201).json({
-        success: true,
-        carte
-    })
+        // generate QR  code
+
+        const qr = await carteKadoQRService({
+            id_carte: carte?.id_carte ?? 0,
+            invite_email: invite.email,
+            client_email: client.email
+        })
+        const finalIframeString = iframe ? iframe.replace('qrcode_base_64', qr.qr) : undefined
+
+        const addressToSendEmail = inviteData.email ?? 'idrisstafo9@gmail.com'
+        await sendEmail(addressToSendEmail, 'Nouvelle Card Cadeau', 'cadeau/notication', {
+            username: inviteData.nom,
+            name: clientData.nom,
+            type: carte?.type_valeur,
+            expires: carte?.date_expiration,
+            iframeString: finalIframeString ? finalIframeString: undefined
+        })
+
+        res.status(201).json({
+            success: true,
+            carte,
+            qrcode: qr
+        })
 
 }catch (err: unknown) {
     const error = err as Error

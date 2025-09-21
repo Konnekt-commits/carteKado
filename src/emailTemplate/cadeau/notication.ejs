@@ -11,12 +11,13 @@
 
 <p>veillez profiter de votre cadeau avant la date du <%= expires %></p>
 
-<% if (typeof iframeString !== 'undefined') {%>
+<% if (typeof iframeString !== 'undefined') { %>
     <iframe
             title="iframe email"
-            srcdoc=<%- '"' + iframeString +'"'%>
+            srcdoc=<%- iframeString %>
     >
     </iframe>
+<p>yessssss</p>
 
 <% } %>
 </body>
