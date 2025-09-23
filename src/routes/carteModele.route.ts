@@ -12,9 +12,9 @@ import {
 
 const router = express.Router()
 
-router.post('/create-carte-modele', isValidEmail,isAuthenticated,authorizeRoles(Roles.ADMIN), createCarteModele)
+router.post('/create-carte-modele', isValidEmail,isAuthenticated, createCarteModele)
 router.get('/carte-modele/:id', CarteModeleInfo)
-router.put('/carte-modele-update/:id',isAuthenticated, authorizeRoles(Roles.ADMIN), updateCarteModele)
+router.put('/carte-modele-update/:id',isAuthenticated, updateCarteModele)
 router.get('/carte-modeles', AllCarteModeles)
-router.delete('/delete-carte-modele/:id',isAuthenticated, authorizeRoles(Roles.ADMIN), deleteCarteModele)
+router.delete('/delete-carte-modele/:id',isAuthenticated, deleteCarteModele)
 export default router

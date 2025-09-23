@@ -12,9 +12,9 @@ import {
 
 const router = express.Router()
 
-router.post('/create-ligne-produit', isValidEmail,isAuthenticated,authorizeRoles(Roles.ADMIN), createLigneProduit)
+router.post('/create-ligne-produit', isValidEmail,isAuthenticated, createLigneProduit)
 router.get('/ligne-produit', ligneProduittInfo)
-router.put('/ligne-produit-update',isAuthenticated, authorizeRoles(Roles.ADMIN), updateLigneProduit)
+router.put('/ligne-produit-update',isAuthenticated, updateLigneProduit)
 router.get('/ligne-produits', AllLigneProduits)
-router.delete('/delete-ligne-produit',isAuthenticated, authorizeRoles(Roles.ADMIN), deleteLigneProduit)
+router.delete('/delete-ligne-produit',isAuthenticated, deleteLigneProduit)
 export default router

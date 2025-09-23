@@ -13,10 +13,10 @@ import {
 
 const router = express.Router()
 
-router.post('/create-produit',isAuthenticated,authorizeRoles(Roles.ADMIN), createProduit)
+router.post('/create-produit',isAuthenticated, createProduit)
 router.get('/produit/:id', produitInfo)
-router.put('/produit-update/:id',isAuthenticated, authorizeRoles(Roles.ADMIN), updateProduit)
+router.put('/produit-update/:id',isAuthenticated, updateProduit)
 router.get('/produits', AllProduits)
 router.get('/search-produit',isAuthenticated, searchProduits)
-router.delete('/delete-produit/:id',isAuthenticated, authorizeRoles(Roles.ADMIN), deleteProduit)
+router.delete('/delete-produit/:id',isAuthenticated, deleteProduit)
 export default router

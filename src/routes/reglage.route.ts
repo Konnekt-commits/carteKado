@@ -12,10 +12,10 @@ import {
 
 const router = express.Router()
 
-router.post('/create-reglage',isAuthenticated,authorizeRoles(Roles.ADMIN), createReglage)
+router.post('/create-reglage',isAuthenticated, createReglage)
 router.get('/reglage/:id', reglageInfo)
-router.put('/reglage-update/:id',isAuthenticated, authorizeRoles(Roles.ADMIN), updateReglage)
+router.put('/reglage-update/:id',isAuthenticated, updateReglage)
 router.post('/reglage-add-produit/:id',isAuthenticated, reglageAddProduct)
 router.get('/reglages', AllReglagesByEntreprise)
-router.delete('/delete-reglage/:id',isAuthenticated, authorizeRoles(Roles.ADMIN), deleteReglage)
+router.delete('/delete-reglage/:id',isAuthenticated, deleteReglage)
 export default router
